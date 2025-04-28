@@ -11,9 +11,7 @@
 
 <br>
 
-<img alt="PyTorch" height="25" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&style=for-the-badge&logo=PyTorch&logoColor=white" />
-
-<img alt="License" height="25" src="https://img.shields.io/badge/License-MIT-yellow" />
+<img alt="PyTorch" height="25" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&style=for-the-badge&logo=PyTorch&logoColor=white" /> <img alt="License" height="25" src="https://img.shields.io/badge/License-MIT-yellow" />
 
 ### :speech_balloon: This repo is the official implementation of:
 
