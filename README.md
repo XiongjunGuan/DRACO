@@ -5,19 +5,30 @@
  * @version: 0.0.1
 -->
 
-# DRACO
+
+
+
+# DRACO 
 
 <h5 align="left"> If our project helps you, please give us a star ⭐ on GitHub to support us. 🙏🙏 </h2>
 
 <br>
 
+
 <img alt="PyTorch" height="25" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&style=for-the-badge&logo=PyTorch&logoColor=white" /> <img alt="License" height="25" src="https://img.shields.io/badge/License-MIT-yellow" />
+
+<p align="LEFT" >
+<a><img src="img/cover.png" alt="DRACO" width="200"></a>
+</p>
+
 
 ### :speech_balloon: This repo is the official implementation of:
 
 - **_Under Review_**: [To be made public soon]()
 
 [Xiongjun Guan](https://xiongjunguan.github.io/), Zhiyu Pan, Jianjiang Feng, Jie Zhou
+
+
 
 ---
 
