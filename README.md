@@ -7,6 +7,8 @@
 
 # Finger Pose Estimation for Under-screen Fingerprint Sensor
 
+---
+
 <h5 align="left"> If our project helps you, please give us a star ⭐ on GitHub to support us. 🙏🙏 </h2>
 
 <br>
