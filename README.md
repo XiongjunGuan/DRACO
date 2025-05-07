@@ -301,19 +301,44 @@ python inference_draco.py -dataset "./examples/patch_cap-inp" \
 We have provided several examples in `./examples` obtained from inference code. One of them is shown below.
 
 :arrow_down_small: **input**
-| ![](./examples/fp-inp/0.png){: width="40%"} |
-|:-----------------------:|
-| fingerprint |
+<table style="margin: auto;">
+  <tr>
+    <td align="center"><img src="./examples/fp-inp/0.png" alt="fingerprint" style="width: 40%;"></td>
+  </tr>
+  <tr>
+    <td align="center">fingerprint</td>
+  </tr>
+</table>
 
-| ![](./examples/patch_cap-inp/cap/1_L0_3.png){: width="70%"} | ![](./examples/patch_cap-inp/patch/1_L0_3.png){: width="70%"} |
-| :---------------------------------------------------------: | :-----------------------------------------------------------: |
-|                      capacitive image                       |                       fingerprint patch                       |
+<br>
+
+<table style="margin: auto;">
+  <tr>
+    <td align="center"><img src="./examples/patch_cap-inp/cap/1_L0_3.png" alt="capacitive image" style="width: 70%;"></td>
+    <td align="center"><img src="./examples/patch_cap-inp/patch/1_L0_3.png" alt="fingerprint patch" style="width: 70%;"></td>
+  </tr>
+  <tr>
+    <td align="center">capacitive image</td>
+    <td align="center">fingerprint patch</td>
+  </tr>
+</table>
+<br>
+
 
 :arrow_down_small: **visualization**
 
-| ![](./examples/fp-res/1.png){: width="45%"} | ![](./examples/patch_cap-res/1_L0_3.png){: width="45%"} |
-| :-----------------------------------------: | :-----------------------------------------------------: |
-|                 fingerprint                 |                       patch & cap                       |
+<table style="margin: auto;">
+  <tr>
+    <td align="center"><img src="./examples/fp-res/1.png" alt="fingerprint" style="width: 45%;"></td>
+    <td align="center"><img src="./examples/patch_cap-res/1_L0_3.png" alt="patch & cap" style="width: 45%;"></td>
+  </tr>
+  <tr>
+    <td align="center">fingerprint</td>
+    <td align="center">patch & cap</td>
+  </tr>
+</table>   
+<br>
+
 
 :arrow_down_small: **estimated info**
 
