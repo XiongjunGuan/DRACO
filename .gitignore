@@ -2,11 +2,7 @@
 saved/
 ckpts/
 
-configs/
-losses/
-models/
-utils/
-*.py
+train.py
 
 
 

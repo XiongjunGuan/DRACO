@@ -1,0 +1,47 @@
+# train settings
+train_cfg:
+  # initial config
+  lr: 1.0e-3
+  end_lr: 1.0e-6
+  epochs: 80
+  batch_size: 6
+  cuda_ids: [7]
+
+  # lr iteration
+  scheduler_type: CosineAnnealingLR
+  optimizer: adamW
+
+  # save ckpts
+  ckpts_num: 2
+
+  # data augmentation
+  apply_aug: True
+  trans_aug: 40
+  rot_aug: 180
+
+# traning database
+db_cfg:
+  train_info_path: /your_path/train_lst/train_path.npy
+  valid_info_path: /your_path/train_lst/fixed_valid_path.npy
+
+# save settings
+save_cfg:
+  save_basedir: ./saved/
+  save_title: test # time / test
+
+# model settings
+model_cfg:
+  model_name: DRACO_Single
+  trans_out_form: claSum # claSum / claMax / reg
+  trans_num_classes: 512 # only valid when 'out_form' is 'cla...'
+  rot_out_form: claSum # claSum / claMax / reg_tan / reg_ang
+  rot_num_classes: 120 # only valid when 'out_form' is 'cla...'
+  inp_mode: fp # fp / patch / cap / mask / patch_cap / patch_mask
+  inp_patch_size: # None or values, only valid when 'inp_mode' has 'patch'
+
+# loss settings
+loss_cfg:
+  supervise_mode: rot_trans # rot / trans / rot_trans
+  trans_loss_form: CE # mse / SmoothL1 / L1 / CE / JS
+  rot_loss_form: CE # mse / SmoothL1 / L1 / CE / JS
+  trans_loss_weight: 1.0

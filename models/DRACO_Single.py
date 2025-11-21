@@ -1,0 +1,232 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchvision
+
+from .CBAM import CBAM
+from .resnext import ResNextBlock
+
+
+class NormalizeModule(nn.Module):
+
+    def __init__(self, m0=0, var0=1, eps=1e-6):
+        super(NormalizeModule, self).__init__()
+        self.m0 = m0
+        self.var0 = var0
+        self.eps = eps
+
+    def forward(self, x):
+        x_m = x.mean(dim=(1, 2, 3), keepdim=True)
+        x_var = x.var(dim=(1, 2, 3), keepdim=True)
+        y = (self.var0 * (x - x_m) ** 2 / x_var.clamp_min(self.eps)).sqrt()
+        y = torch.where(x > x_m, self.m0 + y, self.m0 - y)
+        return y
+
+
+class ConvBnPRelu(nn.Module):
+
+    def __init__(self, in_chn, out_chn, kernel_size=3, stride=1, padding=1, dilation=1):
+        super().__init__()
+        self.conv = nn.Conv2d(
+            in_chn,
+            out_chn,
+            kernel_size=kernel_size,
+            stride=stride,
+            padding=padding,
+            dilation=dilation,
+        )
+        self.bn = nn.BatchNorm2d(out_chn, eps=0.001, momentum=0.99)
+        self.relu = nn.PReLU(out_chn, init=0)
+
+    def forward(self, input):
+        y = self.conv(input)
+        y = self.bn(y)
+        y = self.relu(y)
+        return y
+
+
+class DRACO_Single(nn.Module):
+
+    def __init__(
+        self,
+        inp_mode="fp",
+        trans_out_form="reg",
+        trans_num_classes=120,
+        rot_out_form="claSum",
+        rot_num_classes=120,
+        channel_lst=[64, 128, 256, 512, 1024],
+        layer_lst=[3, 4, 6, 3],
+    ):
+        super(DRACO_Single, self).__init__()
+        self.trans_out_form = trans_out_form
+        self.rot_out_form = rot_out_form
+
+        self.norm_layer = NormalizeModule(m0=0, var0=1)
+
+        if inp_mode == "cap":
+            self.layer1 = nn.Sequential(
+                ConvBnPRelu(1, channel_lst[0], 3),
+                ConvBnPRelu(channel_lst[0], channel_lst[0], 3),
+            )
+        else:
+            self.layer1 = nn.Sequential(
+                ConvBnPRelu(1, channel_lst[0], 7, stride=2, padding=3),
+                ConvBnPRelu(channel_lst[0], channel_lst[0], 3),
+                nn.MaxPool2d(kernel_size=3, stride=2, padding=1),
+            )
+
+        self.layer2 = self._make_layers(
+            ResNextBlock,
+            in_channels=channel_lst[0],
+            out_channels=channel_lst[1],
+            groups=32,
+            stride=1 if inp_mode == "cap" else 2,
+            num_layers=layer_lst[0],
+        )
+        self.layer3 = self._make_layers(
+            ResNextBlock,
+            in_channels=channel_lst[1],
+            out_channels=channel_lst[2],
+            groups=32,
+            stride=1 if inp_mode == "cap" else 2,
+            num_layers=layer_lst[1],
+        )
+
+        self.att3 = CBAM(channel_lst[2])
+
+        self.layer4 = self._make_layers(
+            ResNextBlock,
+            in_channels=channel_lst[2],
+            out_channels=channel_lst[3],
+            groups=32,
+            stride=1 if inp_mode == "cap" else 2,
+            num_layers=layer_lst[2],
+        )
+        self.att4 = CBAM(channel_lst[3])
+
+        self.layer5 = self._make_layers(
+            ResNextBlock,
+            in_channels=channel_lst[3],
+            out_channels=channel_lst[4],
+            groups=32,
+            stride=1 if inp_mode == "cap" else 2,
+            num_layers=layer_lst[3],
+        )
+        self.att5 = CBAM(channel_lst[4])
+
+        self.avgpool_flatten_layer = nn.Sequential(
+            nn.AdaptiveAvgPool2d(1), nn.Flatten(start_dim=1)
+        )
+        if trans_out_form in ["claSum", "claMax"]:
+            self.trans_fc_theta = nn.Linear(channel_lst[4], trans_num_classes)
+        elif trans_out_form == "reg":
+            self.trans_fc_theta = nn.Linear(channel_lst[4], 2)
+        elif trans_out_form == "heat":
+            self.trans_up = nn.Sequential(
+                nn.ConvTranspose2d(
+                    channel_lst[4],
+                    channel_lst[4] // 2,
+                    kernel_size=3,
+                    stride=2,
+                    padding=1,
+                    output_padding=1,
+                ),
+                nn.ConvTranspose2d(
+                    channel_lst[4] // 2,
+                    channel_lst[4] // 4,
+                    kernel_size=3,
+                    stride=2,
+                    padding=1,
+                    output_padding=1,
+                ),
+            )
+            self.trans_out = nn.Sequential(
+                nn.Conv2d(64, 1, kernel_size=1), nn.Sigmoid()
+            )
+
+        if rot_out_form in ["claSum", "claMax"]:
+            self.rot_fc_theta = nn.Linear(channel_lst[4], rot_num_classes)
+        elif rot_out_form == "reg_ang":
+            self.rot_fc_theta = nn.Linear(channel_lst[4], 1)
+        elif rot_out_form == "reg_tan":
+            self.rot_fc_theta = nn.Linear(channel_lst[4], 2)
+
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+
+    def _make_layers(
+        self, Block, in_channels, out_channels, groups, stride, num_layers
+    ):
+        layers = []
+        layers.append(
+            Block(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                groups=groups,
+                stride=stride,
+            )
+        )
+        for _ in range(num_layers - 1):
+            layers.append(
+                Block(
+                    in_channels=out_channels,
+                    out_channels=out_channels,
+                    groups=groups,
+                    stride=1,
+                )
+            )
+        return nn.Sequential(*layers)
+
+    def forward(self, inp, need_feat=False, need_response=False, need_res=True):
+        # See note [TorchScript super()]
+        inp = self.norm_layer(inp)
+        feat = self.layer1(inp)
+        feat = self.layer2(feat)
+        feat = self.layer3(feat)
+        feat, _, _ = self.att3(feat)
+        feat = self.layer4(feat)
+        feat, _, _ = self.att4(feat)
+        feat = self.layer5(feat)
+        feat, _, _ = self.att5(feat)
+
+        feat = self.avgpool_flatten_layer(feat)
+
+        feat_t = feat.clone()
+        if need_feat and (not need_response) and (not need_res):
+            return feat_t
+
+        if self.trans_out_form in ["claSum", "claMax"]:
+            pred_xy = self.trans_fc_theta(feat)
+            response_xy = pred_xy.clone()
+            _, c = pred_xy.shape
+            pred_x = F.softmax(pred_xy[:, : c // 2], dim=1)
+            pred_y = F.softmax(pred_xy[:, c // 2 :], dim=1)
+            pred_xy = torch.cat(
+                [pred_x, pred_y], dim=1
+            )  # [b, (num_class//2,num_class//2)] for x and y prob
+        elif self.trans_out_form == "reg":
+            pred_xy = self.trans_fc_theta(feat) * 64  # [-256, 256] -> [-4, 4]
+
+        if self.rot_out_form in ["claSum", "claMax"]:
+            pred_theta = self.rot_fc_theta(feat)
+            response_theta = pred_theta.clone()
+            pred_theta = F.softmax(pred_theta, dim=1)  # [b, num_class] for theta prob
+        elif self.rot_out_form == "reg_ang":
+            pred_theta = self.rot_fc_theta(feat) * 90  # [-180,180] -> [-2,2]
+        elif self.rot_out_form == "reg_tan":
+            pred_theta = self.rot_fc_theta(feat)  # [b, (1,1)] for cos and sin value
+
+        res = []
+        if need_feat:
+            # res.append(feat_t)
+            res += [feat_t]
+        if need_response:
+            res += [response_xy, response_theta]
+        if need_res:
+            res += [pred_xy, pred_theta]
+
+        return res

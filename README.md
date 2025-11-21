@@ -11,7 +11,7 @@
 
 <br>
 
-<img alt="PyTorch" height="25" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&style=for-the-badge&logo=PyTorch&logoColor=white" /> <img alt="License" height="25" src="https://img.shields.io/badge/License-MIT-yellow" /> <a src="https://img.shields.io/badge/cs.CV-2505.02481-b31b1b?logo=arxiv&logoColor=red" href="https://arxiv.org/abs/2505.02481" height="25"> <img height="25" src="https://img.shields.io/badge/cs.CV-2505.02481-b31b1b?logo=arxiv&logoColor=red">
+<img alt="PyTorch" height="25" src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?&style=badge&logo=PyTorch&logoColor=white" /> <img alt="License" height="25" src="https://img.shields.io/badge/License-MIT-yellow" /> <a src="https://img.shields.io/badge/cs.CV-2505.02481-b31b1b?logo=arxiv&logoColor=red" href="https://arxiv.org/abs/2505.02481" height="25"> <img height="25" src="https://img.shields.io/badge/cs.CV-2505.02481-b31b1b?logo=arxiv&logoColor=red">
 </a>
 
 <p align="LEFT" >
@@ -65,6 +65,9 @@ Code and model weights will be available after this paper is officially accepted
 <br>
 
 ## :train: Train
+
+:lock:  <span style="background-color:DarkSeaGreen;">Due to potential business collaborations, we are not considering disclosing training details at this time.</span>
+
 
 :point_up: If you want to train DRACO, please first construct the training set and overview file `info.npy` in the form of the following example:
 
@@ -233,7 +236,7 @@ python train_kd.py -c patch-cap_kd \
 
 ## :rocket: Inference
 
-The model weight can be download at this [link]().
+The model weight can be download at this [link](https://drive.google.com/drive/folders/1RfPuEtmESyq_DmXez_o0RRHyyCbjsEMB?usp=drive_link).
 
 You need to organize the file structure as follows:
 
