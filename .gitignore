@@ -3,6 +3,7 @@ saved/
 ckpts/
 
 train.py
+train_kd.py
 
 
 
