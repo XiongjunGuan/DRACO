@@ -66,7 +66,7 @@ Code and model weights will be available after this paper is officially accepted
 
 ## :train: Train
 
-:lock:  <span style="background-color:DarkSeaGreen;">Due to potential business collaborations, we are not considering disclosing training details at this time.</span>
+:lock:  <mark>Due to potential business collaborations, we are not considering disclosing training details at this time.</mark>
 
 
 :point_up: If you want to train DRACO, please first construct the training set and overview file `info.npy` in the form of the following example:
