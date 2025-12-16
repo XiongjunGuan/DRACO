@@ -358,15 +358,15 @@ We have provided several examples in `./examples` obtained from inference code. 
 If you find this repository useful, please give us stars and use the following BibTeX entry for citation.
 
 ```
-@misc{guan2025pose,
-      title={Finger Pose Estimation for Under-screen Fingerprint Sensor},
-      author={Xiongjun Guan and Zhiyu Pan and Jianjiang Feng and Jie Zhou},
-      year={2025},
-      eprint={2505.02481},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2505.02481},
-}
+@ARTICLE{guan2025finger,
+  author={Guan, Xiongjun and Pan, Zhiyu and Feng, Jianjiang and Zhou, Jie},
+  journal={IEEE Transactions on Information Forensics and Security}, 
+  title={Finger Pose Estimation for Under-Screen Fingerprint Sensor}, 
+  year={2025},
+  volume={20},
+  number={},
+  pages={12739-12753},
+  doi={10.1109/TIFS.2025.3636671}}
 ```
 
 <br>
