@@ -20,7 +20,7 @@
 
 ### :speech_balloon: This repo is the official implementation of:
 
-- **_Under Review_**: [Finger Pose Estimation for Under-screen Fingerprint Sensor]()
+- **_TIFS 2025_**: [Finger Pose Estimation for Under-screen Fingerprint Sensor]()
 
 [Xiongjun Guan](https://xiongjunguan.github.io/), Zhiyu Pan, Jianjiang Feng, Jie Zhou
 
@@ -48,7 +48,6 @@ matplotlib==3.8.2
 numpy==2.2.5
 opencv_contrib_python==4.10.0.84
 opencv_python==4.8.1.78
-PyYAML==6.0.1
 PyYAML==6.0.2
 scipy==1.15.2
 torch==2.1.2
