@@ -20,7 +20,7 @@
 
 ### :speech_balloon: This repo is the official implementation of:
 
-- **_TIFS 2025_**: [Finger Pose Estimation for Under-screen Fingerprint Sensor]()
+- **_TIFS 2025_**: [Finger Pose Estimation for Under-screen Fingerprint Sensor](https://ieeexplore.ieee.org/abstract/document/11268461)
 
 [Xiongjun Guan](https://xiongjunguan.github.io/), Zhiyu Pan, Jianjiang Feng, Jie Zhou
 
